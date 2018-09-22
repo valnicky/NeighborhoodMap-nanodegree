@@ -1,5 +1,26 @@
+#map, body, .root {
+     padding: 0;
+     margin: 0;
+     width: 100%;
+     height: 100vh; 
+}
+
+
 .App {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+}
+
+.search-filter input {
+  height: 17px;
+  width: 100%;
+  font-size: 12px;
+  margin: 0 auto;
+  border: 3px solid #F6D4D2;
 }
 
 .App-logo {
@@ -8,10 +29,27 @@
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+  height: 95%;
+  padding: 20px 0;
+  width: 15%;
+  position: absolute;
+  z-index: 1;
+  background-color: #170000;
+  overflow-x: hidden;
+  border-right: 5px solid #B175FF;
+  border-left: 5px solid #F6D4D2;
+  text-align: center;
+  display: block;
+}
+
+.App-header h1{
+  color: #B175FF;
+  font-size: 1.5em;
+}
+
+.App-header h2 {
+  color: #F6D4D2;
+  font-size: 1.3em;
 }
 
 .App-title {
@@ -26,3 +64,72 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.App-logo {
+  text-align: center;
+  margin: 0 auto;
+}
+
+ul {
+  width: 100%;
+  margin:  0 auto;
+  padding: 0;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+ul li {
+  margin: 5px 0 ;
+  padding: 3px 5px;
+  color: #fff;
+  text-align: center;
+  list-style: none;
+  width: 100%;
+  height: 33px;
+  border-bottom: 2px solid #fff;
+}
+
+ul li:first-child {
+  border-top: 2px solid #fff;
+}
+
+
+.expandMenu-hidden {
+    display: none;
+}
+
+@media screen  and (max-width: 850px) {
+    .App-header{
+       width: 15%;
+       font-size: 10px;
+    }
+
+    ul li {
+       padding: 1px 3px;
+       margin: 2px 1px;
+    }
+    
+} 
+
+@media screen  and (max-width: 700px) {
+    .App-header{
+       height: 120px;
+       margin-top: 100px;
+       overflow: hidden;
+       overflow-y: scroll;
+    }
+
+    .App-header h1, .App-header input  {
+          font-size: 12px;
+    }
+
+    .App-logo, .App-header h2 {
+      display: none;
+    }
+
+    ul li {
+        margin: 2px 0 ;
+        padding: 1px 0;
+        height: 20px;
+    }
+} 
