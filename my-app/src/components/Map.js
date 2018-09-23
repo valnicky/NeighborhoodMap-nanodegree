@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withGoogleMap, GoogleMap, Marker, withScriptjs } from 'react-google-maps'
+import Markers from './Markers.js'
 import PropTypes from 'prop-types'
 import escaperegexp from 'escape-regexp'
 
@@ -12,6 +13,12 @@ class Map extends React.Component {
           defaultCenter = { { lat: 40.416947, lng: -3.703529 } }
           defaultZoom = { 13 }
         >
+
+        	<Markers/>
+           <Marker
+          	position={{lat: 40.417947, lng: -3.701529 }}
+       		 />
+
         </GoogleMap>
         ));
 		
