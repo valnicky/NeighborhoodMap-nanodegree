@@ -9,9 +9,11 @@ import Markers from './components/Markers.js'
 import infoWindow from './components/InfoWindow.js'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import escaperegexp from 'escape-regexp'
+import escapeRegExp from 'escape-regexp'
+import axios from 'axios'
 
 class App extends Component {
+  
 
    state = {
     venues: [],
@@ -28,11 +30,29 @@ class App extends Component {
     //mapTypeId: window.google.maps.MapTypeId.ROADMAP
   }
 
+componentDidMount() {
+  this.renderMap()
+}
+
+addMarker = (data) => {
+     new window.google.maps.Marker({
+        position: new window.google.maps.LatLng(data.lat, data.lng),
+        map: this.map
+    });
+}
+  
+
   renderMap = () => {
   // loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap")
     window.initMap = this.initMap
 }
 
+addMarker = (data) => {
+     new window.google.maps.Marker({
+        position: new window.google.maps.LatLng(data.lat, data.lng),
+        map: this.map
+    });
+}
 
   initMap = () => {
     var latlng = {lat: 40.416947, lng: -3.703529};
@@ -43,20 +63,25 @@ class App extends Component {
 
    //create a marker
     var marker = new window.google.maps.Marker({
-              position: {lat:40.416447, lng: -3.702529 },
-              //{lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
+              position: {lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
               //position: {lat:40.416447, lng: -3.702529 },
               map: map,
               draggable: true,
               animation: window.google.maps.Animation.DROP,
-              title: "my Marker.com",
-              //this.myVenue.venue.name,
+              title: this.myVenue.venue.name,
               icon: image
     });
 
      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+    // markers.push(addMarker(marker));   
 
-     var contentString = '<div id="content">'+
+     let contentString;
+    //we display the markers
+     this.state.venues.map (myVenue => {
+             contentString = `${myVenue.venue.name}`})
+
+
+   /*  var contentString = '<div id="content">'+
             '<div id="siteNotice">'+
             '</div>'+
             '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
@@ -75,7 +100,7 @@ class App extends Component {
             'https://en.wikipedia.org/w/index.php?title=latlng</a> '+
             '(last visited June 22, 2009).</p>'+
             '</div>'+
-            '</div>';
+            '</div>';*/
 
             //create an infoWindow
         var infowindow = new window.google.maps.InfoWindow({
@@ -83,20 +108,84 @@ class App extends Component {
           maxWidth: 200
         });
 
-        marker.addListener('click', function() {
-    infowindow.open(map, marker);
-  });
+      //when we click on our marker this function 'open' will be executed. This is from https://developers.google.com/maps/documentation/javascript/infowindows
+         marker.addListener('click', function() {
+
+                //we set the new content, we change it
+               infowindow.setContent(contentString)
+
+                //open infowindow
+                infowindow.open(map, marker);
+              
+                //animation from https://developers.google.com/maps/documentation/javascript/examples/marker-animations
+                if(marker.getAnimation() !== null) {
+                  marker.setAnimation(null) ;
+                } else {
+                  marker.setAnimation(window.google.maps.Animation.BOUNCE);
+                }
+        })
 
 }
 
 
 
+//update state function
+  updateQuery = (query)=>{
+  this.setState({query: query})
+}
+
+//a reset function
+  clearQuery = ()=>{
+  this.setState({query: '' })
+}
+
+
+ /*Foursquare API and getVenues from axios*/
+  getVenues = () => {
+    const endPoint = "https://api.foursquare.com/v2/venues/explore?"
+    const parameters = {
+      client_id: "SEVDSWXLYP1YMSO1TCUSW0MKDVMC2E4YWUMQDOURYLQNI2MJ",  /*foursquare keys*/
+      client_secret: "LTLB2BI24EWW2ITXWMGJISPWLD1H2AUUUALL0ONY5VCVXJO0",
+
+      /* parameters from https://developer.foursquare.com/docs/api/venues/explore*/
+      section: "food",
+      query: '',
+      near: "Madrid",
+
+      v:"20180323"
+    }
+
+    axios.get(endPoint + new URLSearchParams(parameters))
+    .then(response => {
+       console.log(response.data.response.groups[0].items)
+        this.setState({
+          /*we store in the venues state the data*/
+          venues: response.data.response.groups[0].items  
+
+        }, this.renderMap()
+        )
+    
+    }).catch(error => {
+      alert("An ERROR has occurred! - " + error)
+    })
+   
+  }
 
 
 
+ onMarkerClick= this.handleMarkerClickEvent
 
 
   render() {
+     let showingLocations;
+           if (this.state.query) {
+                  const match = new RegExp(escapeRegExp(this.state.query, 'i'))
+                  showingLocations = this.state.venues.filter((venue) => match.test(venue.venue.name))
+            } else {
+                 showingLocations = this.state.venues
+            }
+
+        
     return (
       <main className="App" role="main">
         <div className="App-header" id="app-header">
@@ -104,13 +193,45 @@ class App extends Component {
           <h1>MADRID</h1>
           <h2 className="App-title">My Neighborhood</h2>
           <SearchBar 
-          />
+                      venues={this.state.venues}
+                      query={this.state.query}
+                      getVenues = {this.getVenues}
+                      showingLocations={showingLocations}
+                      locations= {this.state.locations}
+                      onUserDidSearch = {this.updateLocations}
+                      onHandleLocationSelected = {this.handleLocationSelected}
+                      onItemClick = {this.handleLocationItemClick}
+                      updateQuery={this.updateQuery}
+                />
+             
         </div>
          {( navigator.onLine) && 
          ( <Map id="map" role="application" aria-labelledby="rg-label"
+              tabIndex="0"  
               infoContent={this.state.infoContent}
-               onMarkerClick = {this.handleMarkerClicked}
-          />)}
+              zoom= {this.state.zoom}
+              markerIcon= {this.state.markerIcon}
+              onMarkerClick = {this.handleMarkerClicked}
+              locations= {this.state.position}
+              showingLocations={showingLocations}
+              showInfoIndex = {this.state.showInfoIndex}
+             > 
+              
+              <Markers  onClick = {this.onMarkerClick}
+                        
+
+
+
+               />
+              <infowindow />
+            
+
+          
+          </Map>
+
+
+
+          )}
           {(!navigator.onLine) && (<div>
             <h2>Map is offline</h2>
             </div>)}

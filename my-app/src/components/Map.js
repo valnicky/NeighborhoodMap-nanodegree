@@ -17,7 +17,7 @@ class Map extends React.Component {
 
         	<Markers/>
            <Marker
-          	position={{lat: 40.417947, lng: -3.701529 }}
+          //	position={{lat: props.marker.position.lat, lng: props.marker.position.lng}}
        		 />
 
         </GoogleMap>
