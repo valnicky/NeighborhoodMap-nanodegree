@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withGoogleMap, GoogleMap, Marker, withScriptjs } from 'react-google-maps'
 import Markers from './Markers.js'
+
 import PropTypes from 'prop-types'
 import escaperegexp from 'escape-regexp'
 
@@ -34,6 +35,7 @@ class Map extends React.Component {
         >
 
         </Map>
+       
         </div>
         );
     }
