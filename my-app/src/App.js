@@ -16,8 +16,8 @@ class App extends Component {
   
 
    state = {
-    venues: [],
-    defaultZoom: 13,
+    venues: []
+   /* defaultZoom: 13,
     defaultMarkerIcon: {},
     markerIcon: {},
     isOpen: false,
@@ -26,20 +26,21 @@ class App extends Component {
     query: '',
     infoContent: "",
     map: [],
-    marker: []
+    marker: []*/
     //mapTypeId: window.google.maps.MapTypeId.ROADMAP
   }
 
 componentDidMount() {
-  this.renderMap()
+  this.getVenues()
+  
 }
 
-addMarker = (data) => {
+/*addMarker = (data) => {
      new window.google.maps.Marker({
         position: new window.google.maps.LatLng(data.lat, data.lng),
         map: this.map
     });
-}
+}*/
   
 
   renderMap = () => {
@@ -47,21 +48,14 @@ addMarker = (data) => {
     window.initMap = this.initMap
 }
 
-addMarker = (data) => {
-     new window.google.maps.Marker({
-        position: new window.google.maps.LatLng(data.lat, data.lng),
-        map: this.map
-    });
-}
-
   initMap = () => {
     var latlng = {lat: 40.416947, lng: -3.703529};
-  var  map = new window.google.maps.Map(document.getElementById('map'), {
-    center: latlng,
-    zoom: 13
+    var  map = new window.google.maps.Map(document.getElementById('map'), {
+         center: latlng,
+         zoom: 13
     });
 
-   //create a marker
+  /* //create a marker
     var marker = new window.google.maps.Marker({
               position: {lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
               //position: {lat:40.416447, lng: -3.702529 },
@@ -70,15 +64,27 @@ addMarker = (data) => {
               animation: window.google.maps.Animation.DROP,
               title: this.myVenue.venue.name,
               icon: image
-    });
+    });*/
 
      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
     // markers.push(addMarker(marker));   
 
-     let contentString;
+    let contentString;
     //we display the markers
      this.state.venues.map (myVenue => {
-             contentString = `${myVenue.venue.name}`})
+          var marker = new window.google.maps.Marker({
+              position: {lat: myVenue.venue.location.lat, lng: myVenue.venue.location.lng},
+              //position: {lat:40.416447, lng: -3.702529 },
+              map: map,
+              title: myVenue.venue.name
+             /* draggable: true,
+              animation: window.google.maps.Animation.DROP,
+              ,
+              icon: image*/
+    });
+
+      //       contentString = `${myVenue.venue.name}`
+    })
 
 
    /*  var contentString = '<div id="content">'+
@@ -104,12 +110,12 @@ addMarker = (data) => {
 
             //create an infoWindow
         var infowindow = new window.google.maps.InfoWindow({
-          content: contentString,
+         // content: contentString,
           maxWidth: 200
         });
 
       //when we click on our marker this function 'open' will be executed. This is from https://developers.google.com/maps/documentation/javascript/infowindows
-         marker.addListener('click', function() {
+/*         marker.addListener('click', function() {
 
                 //we set the new content, we change it
                infowindow.setContent(contentString)
@@ -123,7 +129,7 @@ addMarker = (data) => {
                 } else {
                   marker.setAnimation(window.google.maps.Animation.BOUNCE);
                 }
-        })
+        })*/
 
 }
 
@@ -149,7 +155,7 @@ addMarker = (data) => {
 
       /* parameters from https://developer.foursquare.com/docs/api/venues/explore*/
       section: "food",
-      query: '',
+      query: 'food',
       near: "Madrid",
 
       v:"20180323"
@@ -157,7 +163,7 @@ addMarker = (data) => {
 
     axios.get(endPoint + new URLSearchParams(parameters))
     .then(response => {
-       console.log(response.data.response.groups[0].items)
+      // console.log(response.data.response.groups[0].items)
         this.setState({
           /*we store in the venues state the data*/
           venues: response.data.response.groups[0].items  
@@ -207,14 +213,7 @@ addMarker = (data) => {
         </div>
          {( navigator.onLine) && 
          ( <Map id="map" role="application" aria-labelledby="rg-label"
-              tabIndex="0"  
-              infoContent={this.state.infoContent}
-              zoom= {this.state.zoom}
-              markerIcon= {this.state.markerIcon}
-              onMarkerClick = {this.handleMarkerClicked}
-              locations= {this.state.position}
-              showingLocations={showingLocations}
-              showInfoIndex = {this.state.showInfoIndex}
+              
              > 
               
               <Markers  onClick = {this.onMarkerClick}
@@ -239,7 +238,26 @@ addMarker = (data) => {
     );
   }
 
+  /*tabIndex="0"  
+              infoContent={this.state.infoContent}
+              zoom= {this.state.zoom}
+              markerIcon= {this.state.markerIcon}
+              onMarkerClick = {this.handleMarkerClicked}
+              locations= {this.state.position}
+              showingLocations={showingLocations}
+              showInfoIndex = {this.state.showInfoIndex}*/
 
+ loadScript = (url)  => {
+    var index = window.document.getElementsByTagName("script")[0]
+    var script = window.document.createElement("script")
+    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3"
+    script.async = true
+    script.defer = true
+    index.parentNode.insertBefore(script, index)
+    script.onerror = function() {
+    alert("ERROR! GoogleMap is not loading correctly!!!");
+    }
+    }
 
 
 

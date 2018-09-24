@@ -39,7 +39,7 @@ renderMarker() {
 )
     return (
 
-       <infowindow/>
+       < infowindow />
 
       )
 	}

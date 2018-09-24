@@ -15,7 +15,7 @@ class Map extends React.Component {
           defaultZoom = { 13 }
         >
 
-        	<Markers/>
+        
            <Marker
           //	position={{lat: props.marker.position.lat, lng: props.marker.position.lng}}
        		 />
