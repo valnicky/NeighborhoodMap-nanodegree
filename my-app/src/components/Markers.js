@@ -33,9 +33,9 @@ renderMarker() {
 	 
 	render() {
      const Marker = new window.google.maps.Marker(
-        this.position :{lat: props.marker.position.lat, lng: props.marker.position.lng},
-        
-        this.title: props.myVenue.venue.name
+       // this.position :{lat: props.marker.position.lat, lng: props.marker.position.lng},
+    
+       // this.title: props.myVenue.venue.name
 )
     return (
 

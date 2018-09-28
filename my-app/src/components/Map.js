@@ -17,8 +17,10 @@ class Map extends React.Component {
 
         
            <Marker
-          //	position={{lat: props.marker.position.lat, lng: props.marker.position.lng}}
-       		 />
+          	//position={{lat: props.marker.position.lat, lng: props.marker.position.lng}}
+             position = {{lat:40.416447, lng: -3.702529}}
+       		   animation={window.google.maps.Animation.DROP}
+           />
 
         </GoogleMap>
         ));
@@ -33,7 +35,8 @@ class Map extends React.Component {
    
 
         >
-
+          <Markers/>
+          <infowindow/>
         </Map>
        
         </div>
