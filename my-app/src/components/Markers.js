@@ -3,7 +3,7 @@ import { Marker } from "react-google-maps";
 import infowindow from './InfoWindow.js'
 
 class Markers extends React.Component {
-	
+  
   
 componentWillUnmount() {
   if(this.marker) {
@@ -30,8 +30,8 @@ renderMarker() {
         this.marker.addListener(e, this.handleEvent(e));
       })
   }
-	 
-	render() {
+   
+  render() {
      const Marker = new window.google.maps.Marker(
        // this.position :{lat: props.marker.position.lat, lng: props.marker.position.lng},
     
@@ -42,7 +42,7 @@ renderMarker() {
        < infowindow />
 
       )
-	}
+  }
 
   handleEvent(evtName) {
     return (e) => {

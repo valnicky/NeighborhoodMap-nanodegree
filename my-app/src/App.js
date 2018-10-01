@@ -26,12 +26,13 @@ class App extends Component {
     query: '',
     infoContent: "",
     map: [],
-    marker: []
+    marker: [],
+    showingInfoWindow: false
     //mapTypeId: window.google.maps.MapTypeId.ROADMAP
   }
 
 componentDidMount() {
-  //this.getVenues()
+  this.getVenues()
   
 }
 
@@ -44,9 +45,36 @@ addMarker = (data) => {
   
 
   renderMap = () => {
-  // loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap")
+   //loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap")
     window.initMap = this.initMap
 }
+
+/*Foursquare API and getVenues from axios*/
+  getVenues = () => {
+    const endPoint = "https://api.foursquare.com/v2/venues/explore?"
+    const parameters = {
+      client_id: "SEVDSWXLYP1YMSO1TCUSW0MKDVMC2E4YWUMQDOURYLQNI2MJ",  //foursquare keys
+      client_secret: "LTLB2BI24EWW2ITXWMGJISPWLD1H2AUUUALL0ONY5VCVXJO0",
+      // parameters from https://developer.foursquare.com/docs/api/venues/explore
+     // section: "food",
+      query: 'food',
+      near: "Madrid",
+      v:"20180323"
+    }
+    axios.get(endPoint + new URLSearchParams(parameters))
+    .then(response => {
+      // console.log(response.data.response.groups[0].items)
+        this.setState({
+          //we store in the venues state the data
+          venues: response.data.response.groups[0].items  
+        }, this.renderMap()
+        )
+    
+    }).catch(error => {
+      alert("An ERROR has occurred! - " + error)
+    })
+   
+  }
 
   initMap = () => {
     var latlng = {lat: 40.416947, lng: -3.703529};
@@ -55,7 +83,7 @@ addMarker = (data) => {
          zoom: 13
     });
 
-   //create a marker
+  /* //create a marker
     var marker = new window.google.maps.Marker({
               //position: {lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
               position: {lat:40.416447, lng: -3.702529 },
@@ -65,30 +93,30 @@ addMarker = (data) => {
              // title: this.myVenue.venue.name,
               title: "my marker",
               icon: image
-    });
+    });*/
 
      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-    // markers.push(addMarker(marker));   
-
     
+    var marker;
+    var myVenue;
     //we display the markers
-   /*  this.state.venues.map (myVenue => {
-          var marker = new window.google.maps.Marker({
+     this.state.venues.map (myVenue => {
+           marker = new window.google.maps.Marker({
               position: {lat: myVenue.venue.location.lat, lng: myVenue.venue.location.lng},
               //position: {lat:40.416447, lng: -3.702529 },
               map: map,
-              title: myVenue.venue.name
+              title: myVenue.venue.name,
               draggable: true,
               animation: window.google.maps.Animation.DROP,
-              ,
+              
               icon: image
     });
+           var  contentString = `${myVenue.venue.name}`
+    })
 
-             contentString = `${myVenue.venue.name}`
-    })*/
+// markers.push(addMarker(marker));   
 
-
-     var contentString = '<div id="content">'+
+   /*  var contentString = '<div id="content">'+
             '<div id="siteNotice">'+
             '</div>'+
             '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
@@ -107,11 +135,11 @@ addMarker = (data) => {
             'https://en.wikipedia.org/w/index.php?title=latlng</a> '+
             '(last visited June 22, 2009).</p>'+
             '</div>'+
-            '</div>';
+            '</div>';*/
 
             //create an infoWindow
         var infowindow = new window.google.maps.InfoWindow({
-          content: contentString,
+          content: this.contentString,
           maxWidth: 200
         });
 
@@ -119,8 +147,11 @@ addMarker = (data) => {
         marker.addListener('click', function() {
 
                 //we set the new content, we change it
-               infowindow.setContent(contentString)
-
+               //infowindow.setContent(contentString)
+              this.setState({
+                showingInfoWindow: true
+              })
+               
                 //open infowindow
                 infowindow.open(map, marker);
               
@@ -134,6 +165,13 @@ addMarker = (data) => {
 
 }
 
+onMapClicked = props => {
+  if(this.state.showingInfoWindow) {
+    this.setState({
+      showingInfoWindow: false
+    })
+  }
+}
 
 
 //update state function
@@ -146,37 +184,6 @@ addMarker = (data) => {
   this.setState({query: '' })
 }
 
-
- /*Foursquare API and getVenues from axios*/
- /* getVenues = () => {
-    const endPoint = "https://api.foursquare.com/v2/venues/explore?"
-    const parameters = {
-      client_id: "SEVDSWXLYP1YMSO1TCUSW0MKDVMC2E4YWUMQDOURYLQNI2MJ",  //foursquare keys
-      client_secret: "LTLB2BI24EWW2ITXWMGJISPWLD1H2AUUUALL0ONY5VCVXJO0",
-
-      // parameters from https://developer.foursquare.com/docs/api/venues/explore
-      section: "food",
-      query: 'food',
-      near: "Madrid",
-
-      v:"20180323"
-    }
-
-    axios.get(endPoint + new URLSearchParams(parameters))
-    .then(response => {
-      // console.log(response.data.response.groups[0].items)
-        this.setState({
-          //we store in the venues state the data
-          venues: response.data.response.groups[0].items  
-
-        }, this.renderMap()
-        )
-    
-    }).catch(error => {
-      alert("An ERROR has occurred! - " + error)
-    })
-   
-  }*/
 
 
 
@@ -214,11 +221,12 @@ addMarker = (data) => {
         </div>
          {( navigator.onLine) && 
          ( <Map id="map" role="application" aria-labelledby="rg-label"
-              
+             onMarkerClick= {this.onMarkerClick}
+              showingInfoWindow = {this.state.showingInfoWindow}
              > 
               
               <Markers  
-                      position = {{lat:40.416447, lng: -3.702529}}
+                      position =  {this.position}
                       animation={window.google.maps.Animation.DROP}  
                     
 

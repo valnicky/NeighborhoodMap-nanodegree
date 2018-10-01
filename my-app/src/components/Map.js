@@ -7,7 +7,7 @@ import escaperegexp from 'escape-regexp'
 
 class Map extends React.Component {
 
-	render(){
+  render(){
 
       const Map = withGoogleMap(props => (
         <GoogleMap
@@ -17,15 +17,15 @@ class Map extends React.Component {
 
         
            <Marker
-          	//position={{lat: props.marker.position.lat, lng: props.marker.position.lng}}
+            //position={{lat: props.marker.position.lat, lng: props.marker.position.lng}}
              position = {{lat:40.416447, lng: -3.702529}}
-       		   animation={window.google.maps.Animation.DROP}
+             animation={window.google.maps.Animation.DROP}
            />
 
         </GoogleMap>
         ));
-		
-		 return(
+    
+     return(
         <div ref="map">
           
       
