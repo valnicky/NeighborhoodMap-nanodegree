@@ -2,45 +2,49 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import './index.css';
+import ListView from './components/ListView.js'
 import SearchBar from './components/SearchBar.js'
+import InfoWindow from './components/InfoWindow.js'
 import { withGoogleMap, GoogleMap, Marker, withScriptjs } from 'react-google-maps';
 import Map from './components/Map.js'
 import Markers from './components/Markers.js'
-import infoWindow from './components/InfoWindow.js'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import escapeRegExp from 'escape-regexp'
 import axios from 'axios'
 
 class App extends Component {
-  
 
    state = {
-    venues: [],
-    defaultZoom: 13,
-    defaultMarkerIcon: {},
-    markerIcon: {},
-    isOpen: false,
-    defaultCenter: { lat: 40.416947, lng: -3.703529 },
-    markers: [],
-    query: '',
-    infoContent: "",
-    map: [],
-    marker: [],
-    showingInfoWindow: false
-    //mapTypeId: window.google.maps.MapTypeId.ROADMAP
+      venues: [],
+      defaultZoom: 13,
+      defaultMarkerIcon: {},
+      markerIcon: {},
+      isOpen: false,
+      defaultCenter: { lat: 40.416947, lng: -3.703529 },
+      markers: [],
+      query: '',
+      infoContent: "",
+      map: [],
+      marker: [],
+      showingInfoWindow: false,
+
+      //mapTypeId: window.google.maps.MapTypeId.ROADMAP
   }
 
 componentDidMount() {
-  this.getVenues()
-  
+  this.getVenues()  
 }
 
-addMarker = (data) => {
+//create an array of markers
+createMarker = (marker) => {
+  if(marker !== null) {
      new window.google.maps.Marker({
-        position: new window.google.maps.LatLng(data.lat, data.lng),
+        position: new window.google.maps.LatLng(marker.lat, marker.lng),
         map: this.map
     });
+    this.state.markers.push(marker);
+  }
 }
   
 
@@ -83,59 +87,31 @@ addMarker = (data) => {
          zoom: 13
     });
 
-  /* //create a marker
-    var marker = new window.google.maps.Marker({
-              //position: {lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
-              position: {lat:40.416447, lng: -3.702529 },
-              map: map,
-              draggable: true,
-              animation: window.google.maps.Animation.DROP,
-             // title: this.myVenue.venue.name,
-              title: "my marker",
-              icon: image
-    });*/
 
      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
     
-    var marker;
-    var myVenue;
+   
+    
     //we display the markers
      this.state.venues.map (myVenue => {
-           marker = new window.google.maps.Marker({
-              position: {lat: myVenue.venue.location.lat, lng: myVenue.venue.location.lng},
+          var marker = new window.google.maps.Marker({
+              position: {lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
               //position: {lat:40.416447, lng: -3.702529 },
               map: map,
               title: myVenue.venue.name,
-              draggable: true,
+             // draggable: true,
               animation: window.google.maps.Animation.DROP,
               
               icon: image
     });
+
            var  contentString = `${myVenue.venue.name}`
     })
 
-// markers.push(addMarker(marker));   
+     if(this.marker !== null) {
+            this.markers.push(this.marker);}
 
-   /*  var contentString = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
-            '<div id="bodyContent">'+
-            '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-            'sandstone rock formation in the southern part of the '+
-            'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-            'south west of the nearest large town, Alice Springs; 450&#160;km '+
-            '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-            'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-            'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-            'Aboriginal people of the area. It has many springs, waterholes, '+
-            'rock caves and ancient paintings. Uluru is listed as a World '+
-            'Heritage Site.</p>'+
-            '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=latlng&oldid=297882194">'+
-            'https://en.wikipedia.org/w/index.php?title=latlng</a> '+
-            '(last visited June 22, 2009).</p>'+
-            '</div>'+
-            '</div>';*/
+    this.state.markers.push(this.addMarker(this.marker));   
 
             //create an infoWindow
         var infowindow = new window.google.maps.InfoWindow({
@@ -144,35 +120,52 @@ addMarker = (data) => {
         });
 
       //when we click on our marker this function 'open' will be executed. This is from https://developers.google.com/maps/documentation/javascript/infowindows
-        marker.addListener('click', function() {
+        this.marker.addListener('click', function() {
 
                 //we set the new content, we change it
-               //infowindow.setContent(contentString)
+               infowindow.setContent(this.contentString)
               this.setState({
                 showingInfoWindow: true
               })
                
                 //open infowindow
-                infowindow.open(map, marker);
+                infowindow.open(map, this.state.marker);
               
                 //animation from https://developers.google.com/maps/documentation/javascript/examples/marker-animations
-                if(marker.getAnimation() !== null) {
-                  marker.setAnimation(null) ;
+                if(this.state.marker.getAnimation() !== null) {
+                  this.state.marker.setAnimation(null) ;
                 } else {
-                  marker.setAnimation(window.google.maps.Animation.BOUNCE);
+                  this.state.marker.setAnimation(window.google.maps.Animation.BOUNCE);
                 }
         })
 
 }
 
+//compare list item to marker
+onListItemClick = (e) => {
+  const markers = this.state.markers.find(
+    marker => marker.props.name === e.target.innerText
+    );
+  if(markers !== undefined) {
+    markers.marker.onClick(markers.props, markers.marker, e)
+}
+}
+
 onMapClicked = props => {
   if(this.state.showingInfoWindow) {
     this.setState({
-      showingInfoWindow: false
+      showingInfoWindow: false,
+      activeMarker: null
     })
   }
 }
 
+onMarkerClick = (props, venue, e) =>
+this.setState({
+  selectedVenue: props,
+  activeMarker: venue,
+  showingInfoWindow: true
+});
 
 //update state function
   updateQuery = (query)=>{
@@ -180,25 +173,47 @@ onMapClicked = props => {
 }
 
 //a reset function
-  clearQuery = ()=>{
-  this.setState({query: '' })
+  clearQuery = () => {
+  this.setState({query: '' });
+  this.setState({ queryResult: this.state.venues});
 }
 
 
 
-
- onMarkerClick= this.handleMarkerClickEvent
+//open infowindow if marker/list is clicked
+/* onMarkerClick= (props, venue, e) => 
+      this.setState(
+          venue: props,
+          activemarker: venue,
+          showingInfoWindow: true
+        );*/
 
 
   render() {
-    /* let showingLocations;
+     let showingLocations;
            if (this.state.query) {
                   const match = new RegExp(escapeRegExp(this.state.query, 'i'))
                   showingLocations = this.state.venues.filter((venue) => match.test(venue.venue.name))
             } else {
                  showingLocations = this.state.venues
-            }*/
+            }
 
+
+      /*      let {locations, markers} = this.props
+    let locationsHasValue = false
+      if(locations !== undefined && locations !== null && locations.length > 0) locationsHasValue =true
+    if(locationsHasValue) {
+      let marker = {}
+      locations.map((loc) => {
+        marker = {  lat: loc.location.lat, 
+              lng: loc.location.lng,
+              title: loc.name,
+              venueId: loc.id
+            }
+        markers.push(marker) 
+      })
+
+    }*/
         
     return (
       <main className="App" role="main">
@@ -210,32 +225,54 @@ onMapClicked = props => {
                       venues={this.state.venues}
                       query={this.state.query}
                       getVenues = {this.getVenues}
-                     // showingLocations={showingLocations}
+                      showingLocations={showingLocations}
                       locations= {this.state.locations}
                       onUserDidSearch = {this.updateLocations}
-                      onHandleLocationSelected = {this.handleLocationSelected}
-                      onItemClick = {this.handleLocationItemClick}
+                     // onHandleLocationSelected = {this.handleLocationSelected}
+                     // onItemClick = {this.handleLocationItemClick}
                       updateQuery={this.updateQuery}
                 />
+                <ListView/>
              
         </div>
          {( navigator.onLine) && 
          ( <Map id="map" role="application" aria-labelledby="rg-label"
-             onMarkerClick= {this.onMarkerClick}
+              onMarkerClick= {this.onMarkerClick}
               showingInfoWindow = {this.state.showingInfoWindow}
+              venues={this.state.venues}
+              markers= {this.state.markers}
+            
+              activeMarker={this.state.activeMarker}
+              createMarker={this.addMarker}
+              query={this.state.query}
+              updateQuery={this.updateQuery}
+              clearQuery={this.clearQuery}
+              onMapClicked={this.onMapClicked}
              > 
               
               <Markers  
                       position =  {this.position}
-                      animation={window.google.maps.Animation.DROP}  
-                    
+                      animation={this.animation}  
+                      showingInfoWindow={this.state.showingInfoWindow}
+                      tabIndex="0"  
+                      infoContent={this.state.infoContent}
+                      zoom= {this.state.zoom}
+                      markerIcon= {this.state.markerIcon}
+                      venues={this.state.venues}
+                      locations= {this.locations}
+                      showingLocations={this.showingLocations}
+                      showInfoIndex = {this.state.showInfoIndex}
+                      onMapClicked = {this.onMapClicked}
 
                       
             
                />
-             
-
-          
+              <InfoWindow
+                marker={this.state.marker}
+                visible={this.state.showingInfoWindow}
+                onClick={this.state.showingInfoWindow}>
+                    <div>{this.state.infoContent}</div>
+               </InfoWindow> 
           </Map>
 
 
@@ -247,15 +284,6 @@ onMapClicked = props => {
       </main>
     );
   }
-
-/*tabIndex="0"  
-              infoContent={this.state.infoContent}
-              zoom= {this.state.zoom}
-              markerIcon= {this.state.markerIcon}
-              onMarkerClick = {this.handleMarkerClicked}
-              locations= {this.state.position}
-             showingLocations={showingLocations}
-              showInfoIndex = {this.state.showInfoIndex}*/
 
 
   /*tabIndex="0"  

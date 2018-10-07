@@ -5,10 +5,6 @@ import escapeRegExp from 'escape-string-regexp'
 
 
 class SearchBar extends React.Component {
-	static propTypes = {
-
-	}
-
 	state = {
 		query: '',
 		locationsSearchResult: []
@@ -19,16 +15,17 @@ class SearchBar extends React.Component {
 		query: query
 		})
 	}
-
+//inspiring from https://www.fullstackreact.com/articles/how-to-write-a-google-maps-react-component/#
 	render() {
-
-		return (
-			 
+		return (	 
 			<div className='search-filter' tabIndex='0'>
-		            <input
+		            <input id="filter" 
 		                type='text'
 		                placeholder='Search'
+		                onChange={(event) => this.props.updateQuery(event.target.value)}
+		                value={this.state.query}
 		                aria-label = "Search location"
+		                role="search"
 		            />
           	</div>
 		)
