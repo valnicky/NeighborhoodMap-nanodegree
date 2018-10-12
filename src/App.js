@@ -13,6 +13,20 @@ import PropTypes from 'prop-types'
 import escapeRegExp from 'escape-regexp'
 import axios from 'axios'
 
+const loadMap = (src, callback) => {
+  const ref= window.document.getElementsByTagName("script")[0];
+  console.log('´rrrrrrrrrr', src, ref)
+  const script = window.document.createElement("script");
+  script.src = src;
+  script.async = true;
+  script.defer = true
+  script.onerror = () => {
+    document.write('unable to load Google Maps');
+  }
+  ref.parentNode.insertBefore(script, ref);
+  callback()
+}
+
 class App extends Component {
 
    state = {
@@ -33,6 +47,8 @@ class App extends Component {
   }
 
 componentDidMount() {
+  
+  console.log('got hereeeeee')
   this.getVenues()  
 }
 
@@ -49,8 +65,15 @@ createMarker = (marker) => {
   
 
   renderMap = () => {
+   // console.log('inside render map', this.state.venues)
+
    //loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap")
-    window.initMap = this.initMap
+     window.initMap = this.initMap.bind(this);  
+    // https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap
+   loadMap('https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap', () => {
+      this.setState({mapLoaded: true})
+    });
+    
 }
 
 /*Foursquare API and getVenues from axios*/
@@ -67,11 +90,11 @@ createMarker = (marker) => {
     }
     axios.get(endPoint + new URLSearchParams(parameters))
     .then(response => {
-      // console.log(response.data.response.groups[0].items)
+       console.log('ressssssss', response.data.response.groups[0].items)
         this.setState({
           //we store in the venues state the data
           venues: response.data.response.groups[0].items  
-        }, this.renderMap()
+        }, this.renderMap
         )
     
     }).catch(error => {
@@ -80,20 +103,26 @@ createMarker = (marker) => {
    
   }
 
-  initMap = () => {
+  initMap() {
+    // setTimeout(() =>  this.setState({mapLoaded: true}) ,  5000);
+    setTimeout(() => {
+     
+   console.log('ínside init map', document.getElementById('map'))
     var latlng = {lat: 40.416947, lng: -3.703529};
+
     var  map = new window.google.maps.Map(document.getElementById('map'), {
          center: latlng,
          zoom: 13
     });
 
-
+/*
      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
     
    
     
     //we display the markers
      this.state.venues.map (myVenue => {
+      console.log('´vvvvvvvvvvvv', myVenue)
           var marker = new window.google.maps.Marker({
               position: {lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
               //position: {lat:40.416447, lng: -3.702529 },
@@ -137,8 +166,11 @@ createMarker = (marker) => {
                 } else {
                   this.state.marker.setAnimation(window.google.maps.Animation.BOUNCE);
                 }
-        })
+        }) */
 
+
+    }, 5000)
+ 
 }
 
 //compare list item to marker
@@ -235,7 +267,7 @@ this.setState({
                 <ListView/>
              
         </div>
-         {( navigator.onLine) && 
+         {( navigator.onLine) && this.state.mapLoaded && 
          ( <Map id="map" role="application" aria-labelledby="rg-label"
               onMarkerClick= {this.onMarkerClick}
               showingInfoWindow = {this.state.showingInfoWindow}
