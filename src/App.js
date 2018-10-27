@@ -4,11 +4,7 @@ import './App.css';
 import './index.css';
 import ListView from './components/ListView.js'
 import SearchBar from './components/SearchBar.js'
-import InfoWindow from './components/InfoWindow.js'
 import { withGoogleMap, GoogleMap, Marker, withScriptjs } from 'react-google-maps';
-import Map from './components/Map.js'
-import Markers from './components/Markers.js'
-import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import escapeRegExp from 'escape-regexp'
 import axios from 'axios'
@@ -31,46 +27,21 @@ class App extends Component {
 
    state = {
       venues: [],
-      defaultZoom: 13,
-      defaultMarkerIcon: {},
-      markerIcon: {},
-      isOpen: false,
-      defaultCenter: { lat: 40.416947, lng: -3.703529 },
       markers: [],
-      query: '',
-      infoContent: "",
-      map: [],
-      marker: [],
-      showingInfoWindow: false,
-
-      //mapTypeId: window.google.maps.MapTypeId.ROADMAP
+      query: ''
   }
 
 componentDidMount() {
-  
   console.log('got hereeeeee')
   this.getVenues()  
 }
 
-//create an array of markers
-createMarker = (marker) => {
-  if(marker !== null) {
-     new window.google.maps.Marker({
-        position: new window.google.maps.LatLng(marker.lat, marker.lng),
-        map: this.map
-    });
-    this.state.markers.push(marker);
-  }
-}
-  
-
-  renderMap = () => {
-   // console.log('inside render map', this.state.venues)
+ renderMap = () => {
+    console.log('inside render map', this.state.venues)
 
    //loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap")
      window.initMap = this.initMap.bind(this);  
-    // https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap
-   loadMap('https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap', () => {
+    loadMap('https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap', () => {
       this.setState({mapLoaded: true})
     });
     
@@ -103,73 +74,58 @@ createMarker = (marker) => {
    
   }
 
+
   initMap() {
     // setTimeout(() =>  this.setState({mapLoaded: true}) ,  5000);
-    setTimeout(() => {
+    //setTimeout(() => {
      
    console.log('ínside init map', document.getElementById('map'))
-    var latlng = {lat: 40.416947, lng: -3.703529};
+    let latlng = {lat: 40.416947, lng: -3.703529};
 
-    var  map = new window.google.maps.Map(document.getElementById('map'), {
+    const  map = new window.google.maps.Map(document.getElementById('map'), {
          center: latlng,
          zoom: 13
     });
 
-/*
-     var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-    
-   
-    
-    //we display the markers
-     this.state.venues.map (myVenue => {
-      console.log('´vvvvvvvvvvvv', myVenue)
-          var marker = new window.google.maps.Marker({
-              position: {lat: this.myVenue.venue.location.lat, lng: this.myVenue.venue.location.lng},
-              //position: {lat:40.416447, lng: -3.702529 },
-              map: map,
-              title: myVenue.venue.name,
-             // draggable: true,
-              animation: window.google.maps.Animation.DROP,
-              
-              icon: image
+   // }, 5000)
+
+
+this.infoWindow = new window.google.maps.InfoWindow({
+      maxWidth: 180
     });
 
-           var  contentString = `${myVenue.venue.name}`
+
+this.state.venues.map(v => {
+
+      const contentString = `<b>${v.venue.name}</b> <br><i>${v.venue.location.address}</i></br>
+      <br><i>Data Provided by Foursquare.</i>`;
+
+      const marker = new window.google.maps.Marker({
+        position: {lat: v.venue.location.lat, lng: v.venue.location.lng},
+        map: map,
+        animation: window.google.maps.Animation.DROP,
+        title: v.venue.name
+      });
+
+      const openMarker = () => {
+        this.infoWindow.setContent(contentString);
+        marker.setAnimation(window.google.maps.Animation.BOUNCE);
+        setTimeout(() => marker.setAnimation(null), 550)
+        this.infoWindow.open(map, marker);        
+      }
+
+      marker.addListener('click', () => {
+        openMarker();
+      });
+
+      this.state.markers.push(marker);
+
+    //  let searchBox = new window.google.maps.places.SearchBox(document.getElementById('mapsearch'));
+
     })
 
-     if(this.marker !== null) {
-            this.markers.push(this.marker);}
-
-    this.state.markers.push(this.addMarker(this.marker));   
-
-            //create an infoWindow
-        var infowindow = new window.google.maps.InfoWindow({
-          content: this.contentString,
-          maxWidth: 200
-        });
-
-      //when we click on our marker this function 'open' will be executed. This is from https://developers.google.com/maps/documentation/javascript/infowindows
-        this.marker.addListener('click', function() {
-
-                //we set the new content, we change it
-               infowindow.setContent(this.contentString)
-              this.setState({
-                showingInfoWindow: true
-              })
-               
-                //open infowindow
-                infowindow.open(map, this.state.marker);
-              
-                //animation from https://developers.google.com/maps/documentation/javascript/examples/marker-animations
-                if(this.state.marker.getAnimation() !== null) {
-                  this.state.marker.setAnimation(null) ;
-                } else {
-                  this.state.marker.setAnimation(window.google.maps.Animation.BOUNCE);
-                }
-        }) */
 
 
-    }, 5000)
  
 }
 
@@ -212,15 +168,6 @@ this.setState({
 
 
 
-//open infowindow if marker/list is clicked
-/* onMarkerClick= (props, venue, e) => 
-      this.setState(
-          venue: props,
-          activemarker: venue,
-          showingInfoWindow: true
-        );*/
-
-
   render() {
      let showingLocations;
            if (this.state.query) {
@@ -231,22 +178,6 @@ this.setState({
             }
 
 
-      /*      let {locations, markers} = this.props
-    let locationsHasValue = false
-      if(locations !== undefined && locations !== null && locations.length > 0) locationsHasValue =true
-    if(locationsHasValue) {
-      let marker = {}
-      locations.map((loc) => {
-        marker = {  lat: loc.location.lat, 
-              lng: loc.location.lng,
-              title: loc.name,
-              venueId: loc.id
-            }
-        markers.push(marker) 
-      })
-
-    }*/
-        
     return (
       <main className="App" role="main">
         <div className="App-header" id="app-header">
@@ -260,54 +191,16 @@ this.setState({
                       showingLocations={showingLocations}
                       locations= {this.state.locations}
                       onUserDidSearch = {this.updateLocations}
-                     // onHandleLocationSelected = {this.handleLocationSelected}
-                     // onItemClick = {this.handleLocationItemClick}
+                 
                       updateQuery={this.updateQuery}
                 />
                 <ListView/>
              
         </div>
          {( navigator.onLine) && this.state.mapLoaded && 
-         ( <Map id="map" role="application" aria-labelledby="rg-label"
-              onMarkerClick= {this.onMarkerClick}
-              showingInfoWindow = {this.state.showingInfoWindow}
-              venues={this.state.venues}
-              markers= {this.state.markers}
-            
-              activeMarker={this.state.activeMarker}
-              createMarker={this.addMarker}
-              query={this.state.query}
-              updateQuery={this.updateQuery}
-              clearQuery={this.clearQuery}
-              onMapClicked={this.onMapClicked}
-             > 
+         (
               
-              <Markers  
-                      position =  {this.position}
-                      animation={this.animation}  
-                      showingInfoWindow={this.state.showingInfoWindow}
-                      tabIndex="0"  
-                      infoContent={this.state.infoContent}
-                      zoom= {this.state.zoom}
-                      markerIcon= {this.state.markerIcon}
-                      venues={this.state.venues}
-                      locations= {this.locations}
-                      showingLocations={this.showingLocations}
-                      showInfoIndex = {this.state.showInfoIndex}
-                      onMapClicked = {this.onMapClicked}
-
-                      
-            
-               />
-              <InfoWindow
-                marker={this.state.marker}
-                visible={this.state.showingInfoWindow}
-                onClick={this.state.showingInfoWindow}>
-                    <div>{this.state.infoContent}</div>
-               </InfoWindow> 
-          </Map>
-
-
+          <div id="map" role="application" aria-labelledby="rg-label"/>
 
           )}
           {(!navigator.onLine) && (<div>
@@ -316,29 +209,6 @@ this.setState({
       </main>
     );
   }
-
-
-  /*tabIndex="0"  
-              infoContent={this.state.infoContent}
-              zoom= {this.state.zoom}
-              markerIcon= {this.state.markerIcon}
-              onMarkerClick = {this.handleMarkerClicked}
-              locations= {this.state.position}
-              showingLocations={showingLocations}
-              showInfoIndex = {this.state.showInfoIndex}*/
-
- loadScript = (url)  => {
-    var index = window.document.getElementsByTagName("script")[0]
-    var script = window.document.createElement("script")
-    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3"
-    script.async = true
-    script.defer = true
-    index.parentNode.insertBefore(script, index)
-    script.onerror = function() {
-    alert("ERROR! GoogleMap is not loading correctly!!!");
-    }
-    }
-
 
 
 }
