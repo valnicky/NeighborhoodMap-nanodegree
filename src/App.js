@@ -24,6 +24,9 @@ const loadMap = (src, callback) => {
 }
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+  }
 
    state = {
       venues: [],
@@ -47,18 +50,24 @@ componentDidMount() {
     
 }
 
-/*Foursquare API and getVenues from axios*/
+/*Foursquare API and getVenues from axios, inspired by https://www.youtube.com/watch?v=MEzcDiA6shM*/
   getVenues = () => {
     const endPoint = "https://api.foursquare.com/v2/venues/explore?"
     const parameters = {
       client_id: "SEVDSWXLYP1YMSO1TCUSW0MKDVMC2E4YWUMQDOURYLQNI2MJ",  //foursquare keys
       client_secret: "LTLB2BI24EWW2ITXWMGJISPWLD1H2AUUUALL0ONY5VCVXJO0",
       // parameters from https://developer.foursquare.com/docs/api/venues/explore
-     // section: "food",
-      query: 'food',
+      section: "",
+      query: '',
       near: "Madrid",
-      v:"20180323"
+      description: '',
+      v:"20180323",
+      categories: [],
+      url: '',
+      venuePhotos: 1,
+      id: ''
     }
+
     axios.get(endPoint + new URLSearchParams(parameters))
     .then(response => {
        console.log('ressssssss', response.data.response.groups[0].items)
@@ -74,12 +83,9 @@ componentDidMount() {
    
   }
 
-
   initMap() {
-    // setTimeout(() =>  this.setState({mapLoaded: true}) ,  5000);
-    //setTimeout(() => {
      
-   console.log('ínside init map', document.getElementById('map'))
+    console.log('ínside init map', document.getElementById('map'))
     let latlng = {lat: 40.416947, lng: -3.703529};
 
     const  map = new window.google.maps.Map(document.getElementById('map'), {
@@ -87,24 +93,29 @@ componentDidMount() {
          zoom: 13
     });
 
-   // }, 5000)
 
-
-this.infoWindow = new window.google.maps.InfoWindow({
-      maxWidth: 180
+    this.infoWindow = new window.google.maps.InfoWindow({
+      maxWidth: 220
     });
 
 
-this.state.venues.map(v => {
+    this.state.venues.map(v => {
 
-      const contentString = `<b>${v.venue.name}</b> <br><i>${v.venue.location.address}</i></br>
-      <br><i>Data Provided by Foursquare.</i>`;
+      const contentString = `<b>${v.venue.name}</b> <br><i>${v.venue.location.address}</i>
+      <br/>${v.venue.location.postalCode}, ${v.venue.location.city}</br>${v.venue.categories[0].name}<br/>
+      ${v.venue.url}<br/>${v.venue.description}<br/>${v.venue.categories[0].id}<br/>${v.venue.categories[0].icon.prefix}'150x150'${v.venue.categories[0].icon.suffix}
+      <br/>${v.venue.id}<br/><i>Data Provided by Foursquare.</i>`;
 
       const marker = new window.google.maps.Marker({
         position: {lat: v.venue.location.lat, lng: v.venue.location.lng},
         map: map,
         animation: window.google.maps.Animation.DROP,
-        title: v.venue.name
+        title: v.venue.name,
+        location: v.venue.location,
+        description: v.venue.description,
+        url: v.venue.url,
+        categories: v.venue.categories.name,
+        photos: v.venue.photos.prefix
       });
 
       const openMarker = () => {
@@ -120,13 +131,9 @@ this.state.venues.map(v => {
 
       this.state.markers.push(marker);
 
-    //  let searchBox = new window.google.maps.places.SearchBox(document.getElementById('mapsearch'));
-
     })
 
-
-
- 
+    //let searchBar = new window.google.maps.places.SearchBar(document.getElementById('search')); 
 }
 
 //compare list item to marker
@@ -156,14 +163,14 @@ this.setState({
 });
 
 //update state function
-  updateQuery = (query)=>{
-  this.setState({query: query})
+   updateQuery = (query) => {
+      this.setState({query: query})
 }
 
 //a reset function
   clearQuery = () => {
-  this.setState({query: '' });
-  this.setState({ queryResult: this.state.venues});
+      this.setState({query: '' });
+      this.setState({ queryResult: this.state.venues});
 }
 
 
@@ -172,11 +179,12 @@ this.setState({
      let showingLocations;
            if (this.state.query) {
                   const match = new RegExp(escapeRegExp(this.state.query, 'i'))
-                  showingLocations = this.state.venues.filter((venue) => match.test(venue.venue.name))
+                  showingLocations = this.state.venues.filter((venue) => {match.test(venue.venue.name);})
+                  console.log("venue.venue.name: "+ match)
+                  //console.log("query: "+match);
             } else {
                  showingLocations = this.state.venues
             }
-
 
     return (
       <main className="App" role="main">
@@ -188,12 +196,9 @@ this.setState({
                       venues={this.state.venues}
                       query={this.state.query}
                       getVenues = {this.getVenues}
-                      showingLocations={showingLocations}
-                      locations= {this.state.locations}
-                      onUserDidSearch = {this.updateLocations}
-                 
                       updateQuery={this.updateQuery}
-                />
+                      //showingLocations= {this.showingLocations}
+          />
                 <ListView/>
              
         </div>

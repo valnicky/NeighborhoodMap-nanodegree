@@ -12,15 +12,16 @@ class SearchBar extends React.Component {
 	handleChange = (event) => {
 		const query = event.target.value;
 		this.setState({
-		query: query
+			query: query
 		});
 		this.props.updateQuery(query)
 	}
+
 //inspiring from https://www.fullstackreact.com/articles/how-to-write-a-google-maps-react-component/#
 	render() {
 		return (	 
 			<div className='search-filter' tabIndex='0'>
-		            <input id="mapsearch" 
+		            <input id="search" 
 		                type='text'
 		                placeholder='Search'
 		                onChange={this.handleChange}
