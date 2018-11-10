@@ -15,6 +15,7 @@ class SearchBar extends React.Component {
 			query: query
 		});
 		this.props.updateQuery(query)
+		//console.log("in handleChange");
 	}
 
 //inspiring from https://www.fullstackreact.com/articles/how-to-write-a-google-maps-react-component/#

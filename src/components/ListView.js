@@ -17,18 +17,11 @@ class ListView extends React.Component {
 
 	render() {
 		var listView = this.props.listView;
+           // console.log('xxxxxx', this.props.matchingVenues)
 		return (
 
 		<ul>
-                  <li id="coffee" onChange={this.searchSection}>Coffee</li>
-                  <li id="food">Food</li>
-                  <li id="drinks">Drinks</li>
-                  <li id="shops">Shops</li>
-                  <li id="arts">Arts</li>
-                  <li>Outdoors</li>
-                  <li>Nightlife</li>
-                  <li>Sights</li>
-                  <li>Trending</li>
+            {this.props.matchingVenues.length && this.props.matchingVenues.map(v => <li>{v.venue.name}</li>)}
             </ul>
 			)
 	}

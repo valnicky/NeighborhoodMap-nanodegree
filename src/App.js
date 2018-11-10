@@ -31,7 +31,8 @@ class App extends Component {
    state = {
       venues: [],
       markers: [],
-      query: ''
+      query: '',
+    matchingVenues: []
   }
 
 componentDidMount() {
@@ -56,7 +57,7 @@ componentDidMount() {
     const parameters = {
       client_id: "SEVDSWXLYP1YMSO1TCUSW0MKDVMC2E4YWUMQDOURYLQNI2MJ",  //foursquare keys
       client_secret: "LTLB2BI24EWW2ITXWMGJISPWLD1H2AUUUALL0ONY5VCVXJO0",
-      // parameters from https://developer.foursquare.com/docs/api/venues/explore
+      // parameters from https://developer.foursquare.com/docs/api/venues/explore :
       section: "",
       query: '',
       near: "Madrid",
@@ -99,12 +100,20 @@ componentDidMount() {
     });
 
 
-    this.state.venues.map(v => {
+    this.state.venues.map(async(v) => {
+
+
+
+
+    //const venue = await axios.get(`https://api.foursquare.com/v2/venues/${v.venue.id}`)
+//    .then(response => {
+       //console.log('each vvvvvvvv', venue)
 
       const contentString = `<b>${v.venue.name}</b> <br><i>${v.venue.location.address}</i>
       <br/>${v.venue.location.postalCode}, ${v.venue.location.city}</br>${v.venue.categories[0].name}<br/>
-      ${v.venue.url}<br/>${v.venue.description}<br/>${v.venue.categories[0].id}<br/>${v.venue.categories[0].icon.prefix}'150x150'${v.venue.categories[0].icon.suffix}
-      <br/>${v.venue.id}<br/><i>Data Provided by Foursquare.</i>`;
+      ${v.venue.description}<br/>${v.venue.categories[0].id}<br/>${v.venue.categories[0].icon.prefix}150x150${v.venue.categories[0].icon.suffix}
+      <br/>${v.venue.id}<br/><i>Data Provided by Foursquare.</i>`;  
+      
 
       const marker = new window.google.maps.Marker({
         position: {lat: v.venue.location.lat, lng: v.venue.location.lng},
@@ -113,9 +122,8 @@ componentDidMount() {
         title: v.venue.name,
         location: v.venue.location,
         description: v.venue.description,
-        url: v.venue.url,
-        categories: v.venue.categories.name,
-        photos: v.venue.photos.prefix
+       //url: v.venue.url,
+        categories: v.venue.categories.name
       });
 
       const openMarker = () => {
@@ -130,6 +138,12 @@ componentDidMount() {
       });
 
       this.state.markers.push(marker);
+
+      
+    
+ //   }).catch(error => {
+   //   alert("An ERROR has occurred! - " + error)
+    //})
 
     })
 
@@ -173,9 +187,20 @@ this.setState({
       this.setState({ queryResult: this.state.venues});
 }
 
+ 
+
 
 
   render() {
+    console.log('´svvvvvvvvvvv', this.state.venues)
+ /*  
+  let   matcher = (query) => {
+    const {map, markers} = this.state;
+      const match = new RegExp(escapeRegExp(this.state.query, 'i'));
+      markers.filter(marker => match.test(marker.title)? (marker.setVisible(true)) : (marker.setVisible(false)));            
+      this.setState({markers});
+      console.log(markers);
+    }
      let showingLocations;
            if (this.state.query) {
                   const match = new RegExp(escapeRegExp(this.state.query, 'i'))
@@ -184,7 +209,29 @@ this.setState({
                   //console.log("query: "+match);
             } else {
                  showingLocations = this.state.venues
-            }
+            }*/
+  //t matcher = query => {
+    const{map, markers, query} = this.state;
+  //this.setState({query});
+    let matchingVenues = [];
+    if (query) {
+     // console.log('queyyryyyyyy', query)
+      const match = new RegExp(escapeRegExp(this.state.query.toLowerCase(), "i"));
+      matchingVenues = this.state.venues.filter(v => match.test(v.venue.name.toLowerCase()));
+      //console.log("match: "+ match)
+      //console.log("matchingVenues  : ", matchingVenues);
+      const nonMatchingMarkers = this.state.markers.filter(marker => matchingVenues.every(v => v.venue.name !== marker.title ));
+      //console.log("nonMatchingMarkers  : ", nonMatchingMarkers);
+      //console.log("markerrrrrrrs  : ", this.state.markers);
+      //markers.filter(marker => match.test(marker.title)? (marker.setVisible(true)) : (marker.setVisible(false)));            
+      //this.setState({markers});
+      this.state.markers.forEach(marker => marker.setVisible(true))
+      nonMatchingMarkers.forEach(marker => marker.setVisible(false))
+      //console.log('qqqqqqqqqq', query, '´mmmmmmmmmmm', match, '´maaaaaaaaaaaa', nonMatchingMarkers)
+      //this.setState({venues: matchingVenues})
+     //ection = query
+    }
+  //           
 
     return (
       <main className="App" role="main">
@@ -198,8 +245,9 @@ this.setState({
                       getVenues = {this.getVenues}
                       updateQuery={this.updateQuery}
                       //showingLocations= {this.showingLocations}
+                     //atcher={this.matcher}
           />
-                <ListView/>
+                <ListView matchingVenues={matchingVenues.length && matchingVenues} />
              
         </div>
          {( navigator.onLine) && this.state.mapLoaded && 
