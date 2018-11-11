@@ -32,16 +32,16 @@ class App extends Component {
       venues: [],
       markers: [],
       query: '',
-    matchingVenues: []
+      matchingVenues: []
   }
 
 componentDidMount() {
-  console.log('got hereeeeee')
+  //console.log('got hereeeeee')
   this.getVenues()  
 }
 
  renderMap = () => {
-    console.log('inside render map', this.state.venues)
+    //console.log('inside render map', this.state.venues)
 
    //loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDzBxakJgyoP72UvsoJ6F-lpWCSGKl20IQ&v=3&callback=initMap")
      window.initMap = this.initMap.bind(this);  
@@ -61,32 +61,32 @@ componentDidMount() {
       section: "",
       query: '',
       near: "Madrid",
-      description: '',
+     // description: '',
       v:"20180323",
       categories: [],
-      url: '',
-      venuePhotos: 1,
+     // url: '',
+     // venuePhotos: 1,
       id: ''
     }
 
     axios.get(endPoint + new URLSearchParams(parameters))
-    .then(response => {
-       console.log('ressssssss', response.data.response.groups[0].items)
+      .then(response => {
+        //console.log('ressssssss', response.data.response.groups[0].items)
         this.setState({
-          //we store in the venues state the data
+          //we store in the venues state the data we have
           venues: response.data.response.groups[0].items  
         }, this.renderMap
         )
     
-    }).catch(error => {
-      alert("An ERROR has occurred! - " + error)
+      }).catch(error => {
+         alert("An ERROR has occurred! - " + error)
     })
    
   }
 
   initMap() {
      
-    console.log('ínside init map', document.getElementById('map'))
+    //console.log('ínside init map', document.getElementById('map'))
     let latlng = {lat: 40.416947, lng: -3.703529};
 
     const  map = new window.google.maps.Map(document.getElementById('map'), {
@@ -101,18 +101,13 @@ componentDidMount() {
 
 
     this.state.venues.map(async(v) => {
-
-
-
-
     //const venue = await axios.get(`https://api.foursquare.com/v2/venues/${v.venue.id}`)
-//    .then(response => {
+    //    .then(response => {
        //console.log('each vvvvvvvv', venue)
 
       const contentString = `<b>${v.venue.name}</b> <br><i>${v.venue.location.address}</i>
       <br/>${v.venue.location.postalCode}, ${v.venue.location.city}</br>${v.venue.categories[0].name}<br/>
-      ${v.venue.description}<br/>${v.venue.categories[0].id}<br/>${v.venue.categories[0].icon.prefix}150x150${v.venue.categories[0].icon.suffix}
-      <br/>${v.venue.id}<br/><i>Data Provided by Foursquare.</i>`;  
+      <br/><i>Data Provided by Foursquare.</i>`;  
       
 
       const marker = new window.google.maps.Marker({
@@ -121,7 +116,7 @@ componentDidMount() {
         animation: window.google.maps.Animation.DROP,
         title: v.venue.name,
         location: v.venue.location,
-        description: v.venue.description,
+        //description: v.venue.description,
        //url: v.venue.url,
         categories: v.venue.categories.name
       });
@@ -139,15 +134,13 @@ componentDidMount() {
 
       this.state.markers.push(marker);
 
-      
-    
+         
  //   }).catch(error => {
    //   alert("An ERROR has occurred! - " + error)
     //})
 
     })
 
-    //let searchBar = new window.google.maps.places.SearchBar(document.getElementById('search')); 
 }
 
 //compare list item to marker
@@ -187,32 +180,13 @@ this.setState({
       this.setState({ queryResult: this.state.venues});
 }
 
- 
-
-
 
   render() {
-    console.log('´svvvvvvvvvvv', this.state.venues)
- /*  
-  let   matcher = (query) => {
-    const {map, markers} = this.state;
-      const match = new RegExp(escapeRegExp(this.state.query, 'i'));
-      markers.filter(marker => match.test(marker.title)? (marker.setVisible(true)) : (marker.setVisible(false)));            
-      this.setState({markers});
-      console.log(markers);
-    }
-     let showingLocations;
-           if (this.state.query) {
-                  const match = new RegExp(escapeRegExp(this.state.query, 'i'))
-                  showingLocations = this.state.venues.filter((venue) => {match.test(venue.venue.name);})
-                  console.log("venue.venue.name: "+ match)
-                  //console.log("query: "+match);
-            } else {
-                 showingLocations = this.state.venues
-            }*/
-  //t matcher = query => {
+    //console.log('´svvvvvvvvvvv', this.state.venues)
+ 
+    //t matcher = query => {
     const{map, markers, query} = this.state;
-  //this.setState({query});
+   //this.setState({query});
     let matchingVenues = [];
     if (query) {
      // console.log('queyyryyyyyy', query)

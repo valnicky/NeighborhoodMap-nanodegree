@@ -5,7 +5,7 @@ class ListView extends React.Component {
             section: ''
       }
 
-      searchSection = (sec) => {
+     /* searchSection = (sec) => {
             let secChoosed;
             let food = document.getElementById(sec);
             if (food == 'food') {
@@ -13,16 +13,16 @@ class ListView extends React.Component {
                   this.setState({section: 'food'});
              }
           
-      }
+      }*/
 
 	render() {
 		var listView = this.props.listView;
            // console.log('xxxxxx', this.props.matchingVenues)
 		return (
 
-		<ul>
+		    <ul>
             {this.props.matchingVenues.length && this.props.matchingVenues.map(v => <li>{v.venue.name}</li>)}
-            </ul>
+        </ul>
 			)
 	}
 }
