@@ -2,24 +2,48 @@
 
 This is the 8th project required for the completion of Google-Udacity Front End Web Development Nanodegree.
 
-npm init react-app my-app
+I've used react-google-maps and Foursquare API
+
+##How to Install
+
+   - git clone https://github.com/valnicky/NeighborhoodMap-nanodegree.git
+   - cd NeighborhoodMap-react-Project8Nanodegree
+   - npm install
+   - npm run start
+
+    A Live Preview will open via http://localhost:3000/ by your default browser
+    The page will reload if you make edits.
+	You will also see any lint errors in the console.
+
+##Installing a Dependency
+	The project includes React and ReactDOM as dependencies. It also includes a set of scripts used by Create React App as a development dependency. You may install other dependencies (for example, React Router) with npm:
+
+npm install --save react-router
+
+npm init react-app 
 npm install --save prop-types
 npm install --save escape-string-regexp sort-by
 npm install --save react-router-dom
 npm install --save form-serialize
 npm install axios
 
-I've used React-goolge-map and Foursquare API
+Alternatively you may use yarn:
 
-##How to Install
+yarn add react-router
+This works for any library, not just react-router.
 
-    git clone https://github.com/valnicky/NeighborhoodMap-react-Project8Nanodegree.git
-    cd NeighborhoodMap-react-Project8Nanodegree
-    npm install
-    npm start
-    A Live Preview will opens via http://localhost:3000/ by your default browser!
+##Importing a Component
 
+This project setup supports ES6 modules thanks to Babel. We encourage you to Use import and export instead of require() and module.exports.
 
+SearchBar.js
+	import React, { Component } from 'react';
 
+	class SearchBar extends Component {
+  			render() {
+    				// ...
+  			}
+	}
 
+export default SearchBar; 
 
