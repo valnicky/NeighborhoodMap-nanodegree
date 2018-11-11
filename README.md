@@ -18,14 +18,14 @@ I've used react-google-maps and Foursquare API
 ##Installing a Dependency
 	The project includes React and ReactDOM as dependencies. It also includes a set of scripts used by Create React App as a development dependency. You may install other dependencies (for example, React Router) with npm:
 
-npm install --save react-router
+  - npm install --save react-router
 
-npm init react-app 
-npm install --save prop-types
-npm install --save escape-string-regexp sort-by
-npm install --save react-router-dom
-npm install --save form-serialize
-npm install axios
+  - npm init react-app 
+  - npm install --save prop-types
+  - npm install --save escape-string-regexp sort-by
+  - npm install --save react-router-dom
+  - npm install --save form-serialize
+  - npm install axios
 
 Alternatively you may use yarn:
 
@@ -34,7 +34,7 @@ This works for any library, not just react-router.
 
 ##Importing a Component
 
-This project setup supports ES6 modules thanks to Babel. We encourage you to Use import and export instead of require() and module.exports.
+This project setup supports ES6 modules thanks to Babel. You can use import and export instead of require() and module.exports.
 
 SearchBar.js
 	import React, { Component } from 'react';
