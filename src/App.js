@@ -24,11 +24,12 @@ const loadMap = (src, callback) => {
 }
 
 class App extends Component {
+
   constructor(props) {
     super(props);
   }
 
-   state = {
+  state = {
       venues: [],
       markers: [],
       query: '',
@@ -143,15 +144,13 @@ componentDidMount() {
 
 }
 
-//compare list item to marker
-onListItemClick = (e) => {
-  const markers = this.state.markers.find(
-    marker => marker.props.name === e.target.innerText
-    );
-  if(markers !== undefined) {
-    markers.marker.onClick(markers.props, markers.marker, e)
-}
-}
+
+onMarkerClick = (props, venue, e) =>
+  this.setState({
+    selectedVenue: props,
+    activeMarker: venue,
+    showingInfoWindow: true
+});
 
 onMapClicked = props => {
   if(this.state.showingInfoWindow) {
@@ -162,22 +161,28 @@ onMapClicked = props => {
   }
 }
 
-onMarkerClick = (props, venue, e) =>
-this.setState({
-  selectedVenue: props,
-  activeMarker: venue,
-  showingInfoWindow: true
-});
 
-//update state function
-   updateQuery = (query) => {
+  //delete all the markers on the map
+    clearQuery = () => {
+      this.setState({query: '' });
+      this.setState({queryResult: this.state.venues});
+}
+
+
+//update the state 
+    updateQuery = (query) => {
       this.setState({query: query})
 }
 
-//a reset function
-  clearQuery = () => {
-      this.setState({query: '' });
-      this.setState({ queryResult: this.state.venues});
+//compare the list item to markers
+onListItemClick = (e) => {
+  const markers = this.state.markers.find(
+  marker => marker.props.name === e.target.innerText
+    );
+
+    if(markers !== undefined) {
+    markers.marker.onClick(markers.props, markers.marker, e)
+}
 }
 
 
@@ -203,9 +208,8 @@ this.setState({
       nonMatchingMarkers.forEach(marker => marker.setVisible(false))
       //console.log('qqqqqqqqqq', query, '´mmmmmmmmmmm', match, '´maaaaaaaaaaaa', nonMatchingMarkers)
       //this.setState({venues: matchingVenues})
-     //ection = query
     }
-  //           
+          
 
     return (
       <main className="App" role="main">

@@ -1,23 +1,14 @@
 import React, { Component } from 'react';
 
 class ListView extends React.Component {
-      state = {
+     /* state = {
             section: ''
-      }
-
-     /* searchSection = (sec) => {
-            let secChoosed;
-            let food = document.getElementById(sec);
-            if (food == 'food') {
-
-                  this.setState({section: 'food'});
-             }
-          
       }*/
 
 	render() {
 		var listView = this.props.listView;
            // console.log('xxxxxx', this.props.matchingVenues)
+           
 		return (
 
 		    <ul>

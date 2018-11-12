@@ -14,6 +14,7 @@ class SearchBar extends React.Component {
 		this.setState({
 			query: query
 		});
+
 		this.props.updateQuery(query)
 		//console.log("in handleChange");
 	}
@@ -22,6 +23,7 @@ class SearchBar extends React.Component {
 	render() {
 		return (	 
 			<div className='search-filter' tabIndex='0'>
+			
 		            <input id="search" 
 		                type='text'
 		                placeholder='Search'
