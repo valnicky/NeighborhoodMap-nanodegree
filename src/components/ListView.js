@@ -5,15 +5,24 @@ class ListView extends React.Component {
             section: ''
       }*/
 
+
+	listViewClick  = (m) => {
+		
+			console.log("clickListView: " + m);	
+		
+	}
+
+
 	render() {
-		var listView = this.props.listView;
+		let listView = this.props.listView;
            // console.log('xxxxxx', this.props.matchingVenues)
            
 		return (
 
 		    <ul>
-            {this.props.matchingVenues.length && this.props.matchingVenues.map(v => <li>{v.venue.name}</li>)}
-        </ul>
+            {this.props.matchingVenues.length && this.props.matchingVenues.map(v => 
+            	<li key={v.venue.id} onClick={this.listViewClick}>{v.venue.name}</li>)}
+        	</ul>
 			)
 	}
 }
