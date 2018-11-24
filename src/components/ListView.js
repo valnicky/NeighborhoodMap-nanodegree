@@ -9,6 +9,7 @@ class ListView extends React.Component {
 	listViewClick  = (m) => {
 		
 			console.log("clickListView: " + m);	
+			console.log();
 		
 	}
 
