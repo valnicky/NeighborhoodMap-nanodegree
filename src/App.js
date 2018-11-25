@@ -117,6 +117,7 @@ componentDidMount() {
         animation: window.google.maps.Animation.DROP,
         title: v.venue.name,
         location: v.venue.location,
+        id: v.venue.id,
         //description: v.venue.description,
        //url: v.venue.url,
         categories: v.venue.categories.name
@@ -126,7 +127,14 @@ componentDidMount() {
         this.infoWindow.setContent(contentString);
         marker.setAnimation(window.google.maps.Animation.BOUNCE);
         setTimeout(() => marker.setAnimation(null), 550)
-        this.infoWindow.open(map, marker);        
+        this.infoWindow.open(map, marker);  
+        this.infoWindow.addListener('closerClick', function() {
+          this.infoWindow = null
+        })    
+      }
+
+      marker.onClick = () => {
+        openMarker();
       }
 
       marker.addListener('click', () => {
@@ -225,7 +233,7 @@ onListItemClick = (e) => {
                       //showingLocations= {this.showingLocations}
                      //atcher={this.matcher}
           />
-                <ListView matchingVenues={matchingVenues.length && matchingVenues} />
+                <ListView matchingVenues={matchingVenues.length && matchingVenues} markers={this.state.markers} />
              
         </div>
          {( navigator.onLine) && this.state.mapLoaded && 

@@ -6,23 +6,20 @@ class ListView extends React.Component {
       }*/
 
 
-	listViewClick  = (m) => {
-		
-			console.log("clickListView: " + m);	
-			console.log();
-		
+	listViewClick  = (e) => {
+		const selectedMarker = this.props.markers.find(m => m.id == e.target.id);
+		selectedMarker.onClick();	
 	}
 
 
 	render() {
 		let listView = this.props.listView;
-           // console.log('xxxxxx', this.props.matchingVenues)
            
 		return (
 
 		    <ul>
             {this.props.matchingVenues.length && this.props.matchingVenues.map(v => 
-            	<li key={v.venue.id} onClick={this.listViewClick}>{v.venue.name}</li>)}
+            	<li id={v.venue.id} key={v.venue.id} onClick={this.listViewClick}>{v.venue.name}</li>)}
         	</ul>
 			)
 	}
