@@ -17,7 +17,7 @@ const loadMap = (src, callback) => {
   script.async = true;
   script.defer = true
   script.onerror = () => {
-    document.write('unable to load Google Maps');
+    alert('unable to load Google Maps');
   }
   ref.parentNode.insertBefore(script, ref);
   callback()
